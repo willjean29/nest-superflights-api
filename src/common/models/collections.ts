@@ -1,3 +1,4 @@
 export enum Collections {
-  User = 'users'
+  User = 'users',
+  Passenger = 'passengers'
 }
