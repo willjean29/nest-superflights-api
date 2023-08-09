@@ -1,13 +1,15 @@
-import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Put, UseGuards, SetMetadata } from '@nestjs/common';
 import { FlightsService } from './flights.service';
 import { CreateFlightDto } from './dto/create-flight.dto';
 import { UpdateFlightDto } from './dto/update-flight.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RoleAuthGuard } from '../auth/guards/role-auth.guard';
 
 @ApiTags('flights')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
+@UseGuards(RoleAuthGuard)
 @Controller('flights')
 export class FlightsController {
   constructor(private readonly flightsService: FlightsService) { }
@@ -17,7 +19,9 @@ export class FlightsController {
     return this.flightsService.create(createFlightDto);
   }
 
+
   @Get()
+  @SetMetadata('roles', ['user', 'admin'])
   findAll() {
     return this.flightsService.findAll();
   }

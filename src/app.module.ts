@@ -6,9 +6,14 @@ import { UsersModule } from './users/users.module';
 import { PassengersModule } from './passengers/passengers.module';
 import { FlightsModule } from './flights/flights.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [MongooseModule.forRoot('mongodb://localhost:27017/superflights'), UsersModule, PassengersModule, FlightsModule, AuthModule],
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    MongooseModule.forRoot(process.env.MONGO_URL), UsersModule, PassengersModule, FlightsModule, AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })

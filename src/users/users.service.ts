@@ -5,6 +5,7 @@ import { IUser } from 'src/common/interfaces/user.interface';
 import { Collections } from 'src/common/models/collections';
 import { UserDto } from './dto/user.dto';
 import * as bcrypt from 'bcrypt';
+import { UserRoles } from 'src/common/enum/roles.enum';
 @Injectable()
 export class UsersService {
   constructor(
@@ -35,6 +36,11 @@ export class UsersService {
   async findByEmail(email: string): Promise<IUser> {
     const user = await this.userModel.findOne({ email });
     return user;
+  }
+
+  async updateExistingUsersWithDefaultRole() {
+    const updateResult = await this.userModel.updateMany({ roles: { $exists: false } }, { $set: { role: UserRoles.User } });
+    return updateResult;
   }
 
   async findOne(id: string): Promise<IUser> {

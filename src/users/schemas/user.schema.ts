@@ -1,4 +1,5 @@
 import { Schema } from "mongoose";
+import { UserRoles } from "../../common/enum/roles.enum";
 
 export const UserSchema = new Schema({
   name: {
@@ -16,6 +17,11 @@ export const UserSchema = new Schema({
   password: {
     type: String,
     required: true,
+  },
+  roles: {
+    type: [String],
+    enum: UserRoles,
+    default: UserRoles.User
   }
 }, { timestamps: true });
 

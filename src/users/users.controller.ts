@@ -6,7 +6,7 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('users')
 @ApiBearerAuth()
-@UseGuards(JwtAuthGuard)
+// @UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UsersController {
   constructor(
@@ -17,6 +17,11 @@ export class UsersController {
   @Post()
   create(@Body() userDto: UserDto) {
     return this.usersService.create(userDto)
+  }
+
+  @Put('/roles')
+  updateRoles() {
+    return this.usersService.updateExistingUsersWithDefaultRole()
   }
 
   @Get(':id')
