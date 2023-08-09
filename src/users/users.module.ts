@@ -17,6 +17,7 @@ import { Collections } from '../common/models/collections';
     ])
   ],
   controllers: [UsersController],
-  providers: [UsersService]
+  providers: [UsersService],
+  exports: [UsersService]
 })
 export class UsersModule { }
