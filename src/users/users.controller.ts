@@ -2,7 +2,8 @@ import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nes
 import { UserDto } from './dto/user.dto';
 import { UsersService } from './users.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '..//auth/guards/jwt-auth.guard';
+import { MongoIdValidationPipe } from '../common/pipes/MongoIdValidationPipe';
 
 @ApiTags('users')
 @ApiBearerAuth()
@@ -25,7 +26,7 @@ export class UsersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', MongoIdValidationPipe) id: string) {
     return this.usersService.findOne(id)
   }
 
@@ -35,12 +36,12 @@ export class UsersController {
   }
 
   @Put(':id')
-  update(@Body() userDto: UserDto, @Param('id') id: string) {
+  update(@Body() userDto: UserDto, @Param('id', MongoIdValidationPipe) id: string) {
     return this.usersService.update(userDto, id);
   }
 
   @Delete(':id')
-  deleteOnte(@Param('id') id: string) {
+  deleteOnte(@Param('id', MongoIdValidationPipe) id: string) {
     return this.usersService.deleteOne(id);
   }
 }

@@ -4,6 +4,7 @@ import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { MongoIdValidationPipe } from '../common/pipes/MongoIdValidationPipe';
 
 @ApiTags('passengers')
 @ApiBearerAuth()
@@ -23,17 +24,17 @@ export class PassengersController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
+  findOne(@Param('id', MongoIdValidationPipe) id: string) {
     return this.passengersService.findOne(id);
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updatePassengerDto: UpdatePassengerDto) {
+  update(@Param('id', MongoIdValidationPipe) id: string, @Body() updatePassengerDto: UpdatePassengerDto) {
     return this.passengersService.update(id, updatePassengerDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
+  remove(@Param('id', MongoIdValidationPipe) id: string) {
     return this.passengersService.remove(id);
   }
 }
