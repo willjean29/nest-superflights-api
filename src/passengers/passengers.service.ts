@@ -1,10 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Collections } from 'src/common/models/collections';
+import { Collections } from '../common/models/collections';
 import { IPassenger } from '../common/interfaces/passenger.interface';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 
 @Injectable()
 export class PassengersService {
@@ -14,8 +14,7 @@ export class PassengersService {
   ) { };
 
   async create(createPassengerDto: CreatePassengerDto): Promise<IPassenger> {
-    const passenger = new this.passengersModel(createPassengerDto);
-    await passenger.save();
+    const passenger = await this.passengersModel.create(createPassengerDto);
     return passenger;
   }
 
@@ -25,6 +24,10 @@ export class PassengersService {
   }
 
   async findOne(id: string) {
+    const isValidObjectId = mongoose.isValidObjectId(id);
+    if (!isValidObjectId) {
+      throw new BadRequestException('id must be a valid MongoDB ObjectId.')
+    }
     const passenger = await this.passengersModel.findOne({ _id: id });
     if (!passenger) {
       throw new NotFoundException(`Passenger with ${id} not found`);
