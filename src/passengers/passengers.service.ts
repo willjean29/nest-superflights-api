@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { InjectModel } from '@nestjs/mongoose';
@@ -12,10 +12,14 @@ export class PassengersService {
     @InjectModel(Collections.Passenger)
     private readonly passengersModel: Model<IPassenger>
   ) { };
-
+  private logger = new Logger('PassengersService');
   async create(createPassengerDto: CreatePassengerDto): Promise<IPassenger> {
-    const passenger = await this.passengersModel.create(createPassengerDto);
-    return passenger;
+    try {
+      const passenger = await this.passengersModel.create(createPassengerDto);
+      return passenger;
+    } catch (error) {
+      this.handleException(error)
+    }
   }
 
   async findAll() {
@@ -36,13 +40,27 @@ export class PassengersService {
   }
 
   async update(id: string, updatePassengerDto: UpdatePassengerDto) {
-    const newPassenger = await this.passengersModel.findByIdAndUpdate({ _id: id }, updatePassengerDto, { new: true });
-    return newPassenger;
+    try {
+      const newPassenger = await this.passengersModel.findByIdAndUpdate({ _id: id }, updatePassengerDto, { new: true });
+      return newPassenger;
+    } catch (error) {
+      this.handleException(error)
+    }
   }
 
   async remove(id: string) {
     const passenger = await this.findOne(id);
     await this.passengersModel.deleteOne({ _id: id });
     return passenger;
+  }
+
+  private handleException(error: any) {
+    this.logger.error(error);
+    if (error.code === 11000) {
+      const duplicateKeys = Object.keys(error.keyValue);
+      const msg = `${duplicateKeys} are already in use, please try again`;
+      throw new BadRequestException(msg);
+    }
+    throw error;
   }
 }
