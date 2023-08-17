@@ -22,6 +22,7 @@ describe('PassengersService', () => {
     findByIdAndUpdate: jest.fn(),
     deleteOne: jest.fn(),
   }
+
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -34,6 +35,7 @@ describe('PassengersService', () => {
     }).compile();
     passengersService = module.get<PassengersService>(PassengersService);
     model = module.get<Model<IPassenger>>(getModelToken('passengers'));
+    jest.spyOn<any, any>(passengersService, 'handleException');
   });
 
   it('should be defined', () => {
@@ -41,6 +43,7 @@ describe('PassengersService', () => {
   });
 
   describe('create', () => {
+
     it('should craete a return book', async () => {
       const newPassenger = {
         name: "Marco Torres",
@@ -49,6 +52,18 @@ describe('PassengersService', () => {
       jest.spyOn(model, 'create').mockResolvedValue(mockPassenger as any);
       const passenger = await passengersService.create(newPassenger);
       expect(passenger).toEqual(mockPassenger);
+    });
+
+    it('should throw BadRequestException if duplicated data is provided', async () => {
+      const newPassenger = {
+        name: "Marco Torres",
+        email: "marco@gmail.com",
+      }
+      const mockError = new BadRequestException('email are already in use, please try again')
+      jest.spyOn(model, 'create').mockRejectedValue(mockError);
+      const handleException = jest.spyOn(passengersService as any, 'handleException');
+      await expect(passengersService.create(newPassenger)).rejects.toThrow(BadRequestException);
+      expect(handleException).toBeTruthy()
     });
   })
 
@@ -69,7 +84,7 @@ describe('PassengersService', () => {
     });
 
     it('should throw NotFoundException if passenger is not found', async () => {
-      const findOneMock = jest.spyOn(model, 'findOne').mockResolvedValue(null);
+      jest.spyOn(model, 'findOne').mockResolvedValue(null);
       await expect(passengersService.findOne(mockPassenger._id)).rejects.toThrow(NotFoundException);
       expect(model.findOne).toHaveBeenCalledWith({ _id: mockPassenger._id });
     });
@@ -93,6 +108,15 @@ describe('PassengersService', () => {
       expect(model.findByIdAndUpdate).toHaveBeenCalledWith({ _id: mockPassenger._id }, passenger, { new: true })
       expect(updatePassenger.name).toEqual(result.name);
     });
+
+    it('should throw BadRequestException if duplicated data is provided', async () => {
+      const passenger = { email: "jean@gmail.com" }
+      const mockError = new BadRequestException('email are already in use, please try again')
+      jest.spyOn(model, 'findByIdAndUpdate').mockRejectedValue(mockError);
+      const handleException = jest.spyOn(passengersService as any, 'handleException');
+      await expect(passengersService.update(mockPassenger._id, passenger)).rejects.toThrow(BadRequestException);
+      expect(handleException).toBeTruthy()
+    });
   })
 
   describe('deleteById', () => {
@@ -102,6 +126,31 @@ describe('PassengersService', () => {
       const result = await passengersService.remove(mockPassenger._id);
       expect(model.deleteOne).toHaveBeenCalledWith({ _id: mockPassenger._id })
       expect(result).toEqual(mockPassenger);
+    });
+  })
+
+  describe('handleException', () => {
+    it('should throw BadRequestException if duplicated data is provided', async () => {
+      const mockError = {
+        ok: 0,
+        code: 11000,
+        codeName: "DuplicateKey",
+        keyPattern: {
+          email: 1
+        },
+        keyValue: {
+          email: "juan@gmail.com"
+        }
+      }
+      const mockThrowError = new BadRequestException('email are already in use, please try again')
+      expect(() => passengersService['handleException'](mockError)).toThrow(mockThrowError);
+    });
+
+    it('should throw original error for non-duplicate key error', () => {
+      const error = new Error('Some other error message');
+
+      expect(() => passengersService['handleException'](error)).toThrow(Error);
+      expect(() => passengersService['handleException'](error)).toThrow('Some other error message');
     });
   })
 });
