@@ -11,6 +11,7 @@ import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
     ConfigModule.forRoot({
+      envFilePath: `.env.${process.env.NODE_ENV}`,
       isGlobal: true,
     }),
     MongooseModule.forRoot(process.env.MONGO_URL), UsersModule, PassengersModule, FlightsModule, AuthModule],
