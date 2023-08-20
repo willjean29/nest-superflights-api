@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PassengersController } from './passengers.controller';
 import { PassengersService } from './passengers.service';
-import { getModelToken } from '@nestjs/mongoose';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 
 describe('PassengersController', () => {

@@ -1,13 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PassengersService } from './passengers.service';
-import { IPassenger } from '../common/interfaces/passenger.interface';
 import mongoose, { Model } from 'mongoose';
 import { getModelToken } from '@nestjs/mongoose';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { Passenger } from './schemas/passenger.schema';
 
 describe('PassengersService', () => {
   let passengersService: PassengersService;
-  let model: Model<IPassenger>
+  let model: Model<Passenger>
   const mockPassenger = {
     _id: "64da5ad54745197fc7b81709",
     name: "Marco Torres",
@@ -34,7 +34,7 @@ describe('PassengersService', () => {
       ],
     }).compile();
     passengersService = module.get<PassengersService>(PassengersService);
-    model = module.get<Model<IPassenger>>(getModelToken('passengers'));
+    model = module.get<Model<Passenger>>(getModelToken('passengers'));
     jest.spyOn<any, any>(passengersService, 'handleException');
   });
 
