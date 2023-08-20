@@ -2,7 +2,7 @@ import { BadRequestException, Injectable, Logger, NotFoundException } from '@nes
 import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { InjectModel } from '@nestjs/mongoose';
-import { Collections } from '../common/models/collections';
+import { Collections } from '@common/models/collections';
 import mongoose, { Model } from 'mongoose';
 import { Passenger } from './schemas/passenger.schema';
 

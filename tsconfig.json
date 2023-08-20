@@ -21,5 +21,22 @@
       "./src/@types",
       "./node_modules/@types"
     ],
+    "paths": {
+      "@auth/*": [
+        "src/auth/*"
+      ],
+      "@common/*": [
+        "src/common/*"
+      ],
+      "@flights/*": [
+        "src/flights/*"
+      ],
+      "@passengers/*": [
+        "src/passengers/*"
+      ],
+      "@users/*": [
+        "src/users/*"
+      ],
+    }
   }
 }

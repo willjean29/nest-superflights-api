@@ -3,8 +3,8 @@ import { PassengersService } from './passengers.service';
 import { CreatePassengerDto } from './dto/create-passenger.dto';
 import { UpdatePassengerDto } from './dto/update-passenger.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { MongoIdValidationPipe } from '../common/pipes/MongoIdValidationPipe';
+import { JwtAuthGuard } from '@auth/guards/jwt-auth.guard';
+import { MongoIdValidationPipe } from '@common/pipes/MongoIdValidationPipe';
 
 @ApiTags('passengers')
 @ApiBearerAuth()
